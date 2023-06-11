@@ -1,6 +1,7 @@
 package com.example.love_shayari_app.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.love_shayari_app.Adapter.Gradient_Adapter;
+import com.example.love_shayari_app.Adapter.Shayari_Page_Adapter;
 import com.example.love_shayari_app.Config;
 import com.example.love_shayari_app.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -23,6 +25,7 @@ public class Details_activity extends AppCompatActivity {
     TextView shayaridisp,shayarinumber;
     ImageView expand,reload,copy,previous,pencil,next,share;
     int position;
+    ViewPager viewPager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +39,7 @@ public class Details_activity extends AppCompatActivity {
         pencil=findViewById(R.id.pencil);
         next=findViewById(R.id.next);
         share=findViewById(R.id.share);
+        
         position=getIntent().getIntExtra("position",0);
         String[] shayari=getIntent().getStringArrayExtra("shayari");
 
@@ -63,7 +67,7 @@ public class Details_activity extends AppCompatActivity {
             }
         });
 
-       shayarinumber.setText(position+"/"+shayari.length);
+       shayarinumber.setText((position+1)+"/"+shayari.length);
 
 
         reload.setOnClickListener(new View.OnClickListener() {
@@ -128,7 +132,27 @@ public class Details_activity extends AppCompatActivity {
               startActivity(Intent.createChooser(intentt, "Share Via"));
           }
       });
+        Shayari_Page_Adapter pageAdapter=new Shayari_Page_Adapter(Details_activity.this,shayari,shayaridisp);
+        viewPager=findViewById(R.id.viewPager);
+        viewPager.setAdapter(pageAdapter);
+        viewPager.setCurrentItem(position);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                shayaridisp.setText(Config.emoji[position]+"\n"+shayari[position]+"\n"+Config.emoji[position]);
+                shayarinumber.setText((position+1)+"/"+shayari.length);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
     }
 }
